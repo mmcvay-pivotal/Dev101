@@ -452,7 +452,7 @@ For a database this could mean creating/deleting a schema in an existing multite
 <div class="listingblock">
 <div class="content">
 <pre>$ cd ..
-$ git clone https://github.com/skazi-pivotal/Dev101-Cities-Service
+$ git clone https://github.com/mmcvay-pivotal/Dev101-Cities-Service
 $ cd Dev101-Cities-Service</pre>
 </div>
 </div>
@@ -461,8 +461,8 @@ $ cd Dev101-Cities-Service</pre>
 </li>
 <div class="listingblock">
 <div class="content">
-<pre>$ ./gradlew build
-$ ./gradlew bootRun</pre>
+<pre>$ maven package
+$ maven spring-boot:run</pre>
 </div>
 </div>
 <li>
@@ -484,29 +484,26 @@ $ ./gradlew bootRun</pre>
 <div class="sectionbody">
 <ol class="arabic">
 <li>
-<p>Let's use Spring JPA to amend this project to read cities from a database rather than a hard coded array. We'll use H2 for simplicity we need to configure it. With Spring Boot this is easy because of it's opinionated behaviour, we just add the H2 library to the build.gradle (in fact lets add several libraries).</p>
+<p>Let's use Spring JPA to amend this project to read cities from a database rather than a hard coded array. We'll use H2 for simplicity we need to configure it. With Spring Boot this is easy because of it's opinionated behaviour, we just add the H2 library to the Maven pom.xml (in fact lets add several libraries). Uncomment the following lines.</p>
 <div class="listingblock">
 <div class="content">
-<pre>dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    testCompile('org.springframework.boot:spring-boot-starter-test') 
-    compile("org.springframework.boot:spring-boot-starter-data-rest")
-    compile 'org.springframework.cloud:spring-cloud-spring-service-connector'
-    compile 'org.springframework.cloud:spring-cloud-cloudfoundry-connector'
-    
-    <b>//Uncomment These three lines only
-    //compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    //runtime("org.flywaydb:flyway-core")
-    //runtime('com.h2database:h2')</b>
-    
-    
-    //runtime("org.hsqldb:hsqldb")
-    //runtime("mysql:mysql-connector-java")
-}</pre>
+   <pre>
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.flywaydb&lt;/groupId&gt;
+      &lt;artifactId&gt;flyway-core&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.h2database&lt;/groupId&gt;
+      &lt;artifactId&gt;h2&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+  </pre>
 </div>
 </div>
-<p>If you are using Eclipse, right click the project and select Gradle, Refresh all.</p>
+<p>Make sure you refresh your project in your IDE to pick up the new dependencies.</p>
 </li>
 <li>
 <p>Amend the City class to make it an <code>Entity</code>. Add the following annotations above the class declaration and annotate the fields below to replace the previous definition:</p>
@@ -578,8 +575,8 @@ public interface CityRepository extends PagingAndSortingRepository&#60;City, Lon
 <p>Build and run the code again:</p>
 <div class="listingblock">
 <div class="content">
-<pre>$ ./gradlew build
-$ ./gradlew bootRun</pre>
+<pre>$ maven package
+$ maven spring-boot:run</pre>
 </div>
 </div>
 </li>
@@ -661,11 +658,11 @@ If you haven&#8217;t already, login to it by visiting <a href="https://apps.emea
 <p>Next we&#8217;ll <em>push and bind</em> the newly created instance to our <code>cities</code> application. First have a look at the manifest of this application, it's set to automatically bind to the 'MyDB' service - it doesn't define url, username etc at all. Now, deploy the application.</p>
 <div class="listingblock">
 <div class="content">
-<pre>$ ./gradlew build
+<pre>$ maven package
 $ cf push</pre>
 </div>
 </div>
-<p>One of the libraries we uncommented in our <code>build.gradle</code> is FlyWay, we're using this to pre-initialise our databsase. You can watch in more detail how Flyway pre-loads data by opening a new window and tailing the logs or viewing the logs in the Apps Manager.</p>
+<p>One of the libraries we uncommented in our <code>pom.xml</code> is FlyWay, we're using this to pre-initialise our databsase. You can watch in more detail how Flyway pre-loads data by opening a new window and tailing the logs or viewing the logs in the Apps Manager.</p>
 <p>Once deployed, access the application using the url supplied by CF (but append /cities to the end, e.g. <a href="https://your-URL/cities" target="_blank">https://your-URL/cities</a> (Accept all warnings about SSL certificates).</p>
 <div class="listingblock">
 <div class="content">
